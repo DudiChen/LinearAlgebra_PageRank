@@ -5,10 +5,10 @@ import math
 
 NUM_OF_VERTICES = 10  # int(math.pow(2, 10))
 NUM_OF_VERTICES_CYCLE = 6  # int(math.pow(2, 6))
-epsilon = .64
+epsilon = .01
 N = 5  # Path length
 t = 100  # Num of iterations
-p = 1 / math.pow(2, 6)
+p = 1/ math.pow(2, 6)
 
 
 def page_rank(G):
@@ -18,8 +18,8 @@ def page_rank(G):
     for _ in range(t):
         for _ in range(N):
             chance_for_rand_neighbor = rnd.random()
-            if chance_for_rand_neighbor <= (1 - epsilon):  # Then we'll visit to a random neighbor
-                v0_num_neighbors = len(G[v0])
+            v0_num_neighbors = len(G[v0])
+            if chance_for_rand_neighbor <= (1 - epsilon) and v0_num_neighbors > 0:  # Then we'll visit to a random neighbor
                 v0_rand_neighbor_indx = math.floor(np.random.uniform(low=0, high=v0_num_neighbors))
                 next_vertex = list(G[v0].keys())[v0_rand_neighbor_indx]
             else:  # We'll visit a random vertex in G (by Uniform Distribution)
@@ -50,7 +50,7 @@ def create_random_DiGraph_with_probability(is_dedicated_probability=False):
             if is_dedicated_probability:
                 prob = 1 / math.log(j + 2, 2)
             if rnd.random() <= prob:
-                G_array[i, j] = 1
+                G_array[i, j] = 1.0
     return nx.DiGraph(G_array)
 
 
@@ -68,12 +68,17 @@ def create_cycle_graph_and_add_edge(G):
 # TODO: Need to clear up garbage code from 'main'
 if __name__ == '__main__':
     for i in range(20):
-        G = create_random_DiGraph_with_probability(True)
-        G = create_cycle_graph_and_add_edge(G)
-        print('After:')
-        print(G.nodes)
-        print(G.edges)
+        G = create_random_DiGraph_with_probability()
+        d = page_rank(G)
+        print(d)
+        print("sum of d:")
+        print(sum(d))
         print('------------------------------------')
+
+        # G = create_cycle_graph_and_add_edge(G)
+        # print('After:')
+        # print(G.nodes)
+        # print(G.edges)
 
 
 
