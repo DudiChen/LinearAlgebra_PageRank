@@ -19,28 +19,33 @@ time1 = datetime.datetime.now()
 def page_rank(G, iterations=t):
     n = G.vcount()
     d = [0 for i in range(n)]
-    v0 = math.floor(np.random.uniform(low=0, high=n))
+
     for _ in range(iterations):
+        # v0 = math.floor(np.random.uniform(low=0, high=n))
+        v0 = math.floor(rnd.uniform(0, n))
         for _ in range(N):
-            chance_for_rand_neighbor = rnd.random()
+            # chance_for_rand_neighbor = math.floor(np.random.uniform(low=0, high=1))
+            chance_for_rand_neighbor = math.floor(rnd.uniform(0, 1))
             v0_num_neighbors = len(G.neighbors(v0))
-            if chance_for_rand_neighbor <= (1 - epsilon) and v0_num_neighbors > 0:  # Then we'll visit to a random neighbor
-                v0_rand_neighbor_indx = math.floor(np.random.uniform(low=0, high=v0_num_neighbors))
+            if v0_num_neighbors > 0 and chance_for_rand_neighbor <= (1 - epsilon):  # Then we'll visit to a random neighbor
+                # v0_rand_neighbor_indx = math.floor(np.random.uniform(low=0, high=v0_num_neighbors))
+                v0_rand_neighbor_indx = math.floor(rnd.uniform(0, v0_num_neighbors))
                 next_vertex = G.neighbors(v0)[v0_rand_neighbor_indx]
             else:  # We'll visit a random vertex in G (by Uniform Distribution)
-                next_vertex = math.floor(np.random.uniform(low=0, high=n))
+                # next_vertex = math.floor(np.random.uniform(low=0, high=n))
+                next_vertex = math.floor(rnd.uniform(0, n))
 
             v0 = next_vertex
         d[next_vertex] += 1
-    d = [k / t for k in d]
+    d = [k / iterations for k in d]
 
     return d
 
 
 def avg_node_degree(G):
     arr = [0 for i in range(NUM_OF_VERTICES)]
+    # arr = np.zeros(NUM_OF_VERTICES)
     sum_degrees = 0
-    print(arr)
     for v in range(NUM_OF_VERTICES):
         arr[v] = len(G.neighbors(v))
         sum_degrees += arr[v]
@@ -51,19 +56,39 @@ def avg_node_degree(G):
 # TODO - [Performance:] moving from networkx igraph improved by 4 times faster - but still not good enough!!!
 def incremental_iterations_page_rank(G):
     t = 2
-    d0 = page_rank(G, t)
+    # DEBUG:
+    t = int(math.pow(2, 12))
+    start_timer()
+
+    d0 = np.array(page_rank(G, t))
+    print('d0: {0}'.format(d0))
+    print('sum d0: {0}'.format(sum(d0)))
+    # DEBUG:
+    diff = get_time_passed_seconds()
+    print("Page-Rank calc of t = {1} took: {0} seconds.".format(diff, t))
+
     t *= 2
-    d1 = page_rank(G, t)
+    # DEBUG:
+    start_timer()
+
+    d1 = np.array(page_rank(G, t))
+    # DEBUG:
+    print('d1: {0}'.format(d1))
+    print('sum d1: {0}'.format(sum(d1)))
+    diff = get_time_passed_seconds()
+    print("Page-Rank calc of t = {1} took: {0} seconds.".format(diff, t))
+
     t *= 2
-    loop = 1
+    loop = 2
     # np.sqrt(x.dot(x))
 
     while True:
         # DEBUG:
         start_timer()
 
-        dist_v = np.array(d1) - np.array(d0)
-        dist_len = np.sqrt(dist_v.dot(dist_v))
+        # dist_v = np.array(d1) - np.array(d0)
+        # dist_len = np.sqrt(dist_v.dot(dist_v))
+        dist_len = np.linalg.norm(d1 - d0)
         # DEBUG:
         diff = get_time_passed_seconds()
         print("Distance calc took: {0} seconds.".format(diff))
@@ -75,7 +100,7 @@ def incremental_iterations_page_rank(G):
         # DEBUG:
         start_timer()
 
-        d1 = page_rank(G, t)
+        d1 = np.array(page_rank(G, t))
         # DEBUG:
         diff = get_time_passed_seconds()
         print("Page-Rank calc took: {0} seconds.".format(diff))
@@ -96,7 +121,6 @@ def convert_nparray_to_igraph(G_nparray):
 
 
 def create_random_directed_graph():
-    # G_array = np.random.randint(low=0, high=2, size=(NUM_OF_VERTICES, NUM_OF_VERTICES))
     return convert_nparray_to_igraph(create_random_numpyarr())
 
 
@@ -118,12 +142,9 @@ def create_random_igraph_with_probability(is_dedicated_probability=False):
 
 
 def create_cycle_graph_and_add_edge(G):
-    # C = nx.cycle_graph(n=NUM_OF_VERTICES_CYCLE, create_using=nx.DiGraph)
     C = igraph.Graph.Ring(NUM_OF_VERTICES_CYCLE, directed=True)
     G.add_vertices(NUM_OF_VERTICES_CYCLE)
     G.add_edges([(k + NUM_OF_VERTICES, l + NUM_OF_VERTICES) for (k, l) in C.get_edgelist()])
-    # G.add_nodes_from([k + NUM_OF_VERTICES for k in list(C.nodes)])
-    # G.add_edges_from([(k + NUM_OF_VERTICES, l + NUM_OF_VERTICES) for (k, l) in list(C.edges)])
     u_of_edge = np.random.randint(low=0, high=NUM_OF_VERTICES)
     v_of_edge = np.random.randint(low=NUM_OF_VERTICES, high=NUM_OF_VERTICES + NUM_OF_VERTICES_CYCLE)
     connecting_edge = tuple(u_of_edge, v_of_edge)
