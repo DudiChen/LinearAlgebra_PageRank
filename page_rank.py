@@ -104,12 +104,10 @@ def create_cycle_graph_and_add_edge(G):
 
 # TODO: Need to clear up garbage code from 'main'
 if __name__ == '__main__':
-    # for i in range(10):
     G = create_random_igraph_with_probability()
     print(avg_node_degree(G))
     incremental_iterations_page_rank(G)
     print('------------------------------------')
-
 
 
 # G = nx.DiGraph(
