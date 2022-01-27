@@ -55,62 +55,62 @@ def avg_node_degree(G):
 
 # TODO - [Performance:] moving from networkx igraph improved by 4 times faster - but still not good enough!!!
 def incremental_iterations_page_rank(G):
+    time_start = datetime.datetime.now()
+    iteration = 1
+    # DEBUG:
     t = 2
-    # DEBUG:
-    t = int(math.pow(2, 12))
+    # start_timer()
+    #
+    # d0 = np.array(page_rank(G, t))
+    # # DEBUG:
+    # diff = get_time_passed_seconds()
+    # print("Page-Rank calc of t = {1} took: {0} seconds.".format(diff, t))
+    #
+    # t *= 2
+    # iteration += 1
+    # # DEBUG:
     start_timer()
 
-    d0 = np.array(page_rank(G, t))
-    print('d0: {0}'.format(d0))
-    print('sum d0: {0}'.format(sum(d0)))
+    d_current = np.array(page_rank(G, t))
     # DEBUG:
     diff = get_time_passed_seconds()
     print("Page-Rank calc of t = {1} took: {0} seconds.".format(diff, t))
 
     t *= 2
-    # DEBUG:
-    start_timer()
-
-    d1 = np.array(page_rank(G, t))
-    # DEBUG:
-    print('d1: {0}'.format(d1))
-    print('sum d1: {0}'.format(sum(d1)))
-    diff = get_time_passed_seconds()
-    print("Page-Rank calc of t = {1} took: {0} seconds.".format(diff, t))
-
-    t *= 2
-    loop = 2
-    # np.sqrt(x.dot(x))
+    iteration += 1
 
     while True:
+        d_previous = d_current
+
         # DEBUG:
         start_timer()
 
-        # dist_v = np.array(d1) - np.array(d0)
-        # dist_len = np.sqrt(dist_v.dot(dist_v))
-        dist_len = np.linalg.norm(d1 - d0)
+        d_current = np.array(page_rank(G, t))
+        # DEBUG:
+        diff = get_time_passed_seconds()
+        print("Page-Rank calc took: {0} seconds.".format(diff))
+
+        # DEBUG:
+        start_timer()
+
+        dist_len = np.linalg.norm(d_current - d_previous)
         # DEBUG:
         diff = get_time_passed_seconds()
         print("Distance calc took: {0} seconds.".format(diff))
 
+        print('Done page rank for t = 2^{0} = {1}'.format(iteration, math.floor(math.pow(2, iteration))))
+        print('||v1 - v0|| = ', dist_len)
+        print('Finished iteration number: ', iteration)
+        print('---------------------------------------------------------------')
+
         if dist_len < 1 / math.pow(2, 8):
             break
-    # while np.linalg.norm(np.array(d1) - np.array(d0)) >= 1 / math.pow(2, 8):
-        d0 = d1
-        # DEBUG:
-        start_timer()
-
-        d1 = np.array(page_rank(G, t))
-        # DEBUG:
-        diff = get_time_passed_seconds()
-        print("Page-Rank calc took: {0} seconds.".format(diff))
-        print('Done page rank for t = ', t)
-        print('||d1 - d0|| = ', dist_len)
-        print('done loop number', loop)
-        print('---------------------------------------------------------------')
-        loop += 1
+        iteration += 1
         t *= 2
-    print('Final t is:', t)
+
+    total_diff = (datetime.datetime.now() - time_start).total_seconds()
+    print('Final iteration was: {0} of t = 2^{0} = {1}'.format(iteration, math.floor(math.pow(2, iteration))))
+    print('Total Duration: {0} minutes'.format(total_diff / 60))
 
 
 def convert_nparray_to_igraph(G_nparray):
