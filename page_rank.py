@@ -42,12 +42,12 @@ def incremental_iterations_page_rank(G):
     time_start = datetime.datetime.now()
     iteration = 1
     t = 2
-    d_current = np.array(page_rank(G, t))
+    d_current = page_rank(G, t)
     t *= 2
     iteration += 1
     while True:
         d_previous = d_current
-        d_current = np.array(page_rank(G, t))
+        d_current = page_rank(G, t)
         dist_len = np.linalg.norm(d_current - d_previous)
         print('Done page rank for t = 2^{0} = {1}'.format(iteration, math.floor(math.pow(2, iteration))))
         print('||v1 - v0|| = ', dist_len)
