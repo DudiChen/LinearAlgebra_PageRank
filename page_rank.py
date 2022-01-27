@@ -97,8 +97,8 @@ def create_cycle_graph_and_add_edge(G):
     G.add_edges([(k + NUM_OF_VERTICES, l + NUM_OF_VERTICES) for (k, l) in C.get_edgelist()])
     u_of_edge = np.random.randint(low=0, high=NUM_OF_VERTICES)
     v_of_edge = np.random.randint(low=NUM_OF_VERTICES, high=NUM_OF_VERTICES + NUM_OF_VERTICES_CYCLE)
-    connecting_edge = tuple(u_of_edge, v_of_edge)
-    G.add_edges(list(connecting_edge))
+    new_edges = [(u_of_edge, v_of_edge)]
+    G.add_edges(new_edges)
     return G
 
 
