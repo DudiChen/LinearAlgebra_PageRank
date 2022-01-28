@@ -43,20 +43,18 @@ def incremental_iterations_page_rank(G):
     iteration = 1
     t = 2
     d_current = page_rank(G, t)
-    t *= 2
-    iteration += 1
     while True:
+        iteration += 1
+        t *= 2
         d_previous = d_current
         d_current = page_rank(G, t)
         dist_len = np.linalg.norm(d_current - d_previous)
-        print('Done page rank for t = 2^{0} = {1}'.format(iteration, int(math.pow(2, iteration))))
+        print('Completed Page-Rank of t = 2^{0} = {1}'.format(iteration, int(math.pow(2, iteration))))
         print('||v1 - v0|| = ', dist_len)
         print('Finished iteration number: ', iteration)
         print('---------------------------------------------------------------')
         if dist_len < 1 / math.pow(2, 8):
             break
-        iteration += 1
-        t *= 2
 
     total_diff_secs = (datetime.datetime.now() - time_start).total_seconds()
     print('Final iteration was: {0} of t = 2^{0} = {1}'.format(iteration, int(math.pow(2, iteration))))
