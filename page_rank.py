@@ -21,6 +21,7 @@ def page_rank(G, iterations=t):
             chance_for_rand_neighbor = math.floor(rnd.uniform(0, 1))
             v0_adj_neighbors = G.neighbors(v0, mode="out")
             v0_num_adj_neighbors = len(v0_adj_neighbors)
+            # TODO: QUESTION; What if v0 has only itself as a neighbor ??? Should we go to a random vertex instead?
             if v0_num_adj_neighbors > 0 and chance_for_rand_neighbor <= (1 - epsilon):  # Then we'll visit to a random neighbor
                 v0_rand_neighbor_indx = math.floor(rnd.uniform(0, v0_num_adj_neighbors))
                 next_vertex = v0_adj_neighbors[v0_rand_neighbor_indx]
