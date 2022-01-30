@@ -81,12 +81,8 @@ def incremental_iterations_page_rank(G):
     print('Final iteration is {0}.\nresult: t = 2^{0} = {1}\n'.format(iteration, int(math.pow(2, iteration))))
     print('Final Vector = ', d_current)
     # TODO Write vector to external file
-    # TODO: BUG!!! "IndexError: invalid index to scalar variable" - should be just 'd_current.max()'.
-    # print('Max value in d=', d_current.max()[0][0])
     print('Max value in d=', d_current.max())
     print('Indices of max vale: ', np.where(d_current == d_current.max()))
-    # TODO: BUG!!! "IndexError: invalid index to scalar variable" - should be just 'd_current.max()'.
-    # print('Min value in d=', d_current.min()[0][0])
     print('Min value in d=', d_current.min())
     print('Indices of min vale: ', np.where(d_current == d_current.min()))
     print('Total Duration: {0} minutes'.format(total_diff_secs / 60))
