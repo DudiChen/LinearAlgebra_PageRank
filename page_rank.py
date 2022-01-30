@@ -15,27 +15,26 @@ p = 1 / math.pow(2, 6)
 def page_rank(G, iterations=t):
     n = G.vcount()
     d = np.zeros(n)
-
     for _ in range(iterations):
-        v0 = math.floor(rnd.uniform(0, n))
+        next_vertex = v0 = math.floor(rnd.uniform(0, n))
         for _ in range(N):
             chance_for_rand_neighbor = math.floor(rnd.uniform(0, 1))
-            v0_num_neighbors = len(G.neighbors(v0))
-            if v0_num_neighbors > 0 and chance_for_rand_neighbor <= (1 - epsilon):  # Then we'll visit to a random neighbor
-                v0_rand_neighbor_indx = math.floor(rnd.uniform(0, v0_num_neighbors))
-                next_vertex = G.neighbors(v0)[v0_rand_neighbor_indx]
+            v0_adj_neighbors = G.neighbors(v0, mode="out")
+            v0_num_adj_neighbors = len(v0_adj_neighbors)
+            if v0_num_adj_neighbors > 0 and chance_for_rand_neighbor <= (1 - epsilon):  # Then we'll visit to a random neighbor
+                v0_rand_neighbor_indx = math.floor(rnd.uniform(0, v0_num_adj_neighbors))
+                next_vertex = v0_adj_neighbors[v0_rand_neighbor_indx]
             else:  # We'll visit a random vertex in G (by Uniform Distribution)
                 next_vertex = math.floor(rnd.uniform(0, n))
-
             v0 = next_vertex
         d[next_vertex] += 1
-
     return d / iterations
 
 
 def avg_node_degree(G):
-    degrees = [len(G.neighbors(i)) for i in range(NUM_OF_VERTICES)]
-    return sum(degrees) / NUM_OF_VERTICES
+    n = G.vcount()
+    degrees = [G.degree(i) for i in range(n)]
+    return sum(degrees) / n
 
 
 def incremental_iterations_page_rank(G):
@@ -55,7 +54,6 @@ def incremental_iterations_page_rank(G):
         print('---------------------------------------------------------------')
         if dist_len < 1 / math.pow(2, 8):
             break
-
     total_diff_secs = (datetime.datetime.now() - time_start).total_seconds()
     print('Final iteration was: {0} of t = 2^{0} = {1}'.format(iteration, int(math.pow(2, iteration))))
     print('Total Duration: {0} minutes'.format(total_diff_secs / 60))
@@ -90,11 +88,13 @@ def create_random_igraph_with_probability(is_dedicated_probability=False):
 
 
 def create_cycle_graph_and_add_edge(G):
-    C = igraph.Graph.Ring(NUM_OF_VERTICES_CYCLE, directed=True)
-    G.add_vertices(NUM_OF_VERTICES_CYCLE)
-    G.add_edges([(k + NUM_OF_VERTICES, l + NUM_OF_VERTICES) for (k, l) in C.get_edgelist()])
-    u_of_edge = np.random.randint(low=0, high=NUM_OF_VERTICES)
-    v_of_edge = np.random.randint(low=NUM_OF_VERTICES, high=NUM_OF_VERTICES + NUM_OF_VERTICES_CYCLE)
+    n_of_G = G.vcount()
+    n_of_C = NUM_OF_VERTICES_CYCLE
+    C = igraph.Graph.Ring(n_of_C, directed=True)
+    G.add_vertices(n_of_C)
+    G.add_edges([(k + n_of_G, l + n_of_G) for (k, l) in C.get_edgelist()])
+    u_of_edge = np.random.randint(low=0, high=n_of_G)
+    v_of_edge = np.random.randint(low=n_of_G, high=n_of_G + n_of_C)
     new_edges = [(u_of_edge, v_of_edge)]
     G.add_edges(new_edges)
     return G
