@@ -23,9 +23,7 @@ def page_rank(G, iterations=t):
             chance_for_rand_neighbor = math.floor(rnd.uniform(0, 1))
             v0_adj_neighbors = G.neighbors(v0, mode="out")
             v0_num_adj_neighbors = len(v0_adj_neighbors)
-            # TODO: QUESTION; What if v0 has only itself as a neighbor ??? Should we go to a random vertex instead?
-            if v0_num_adj_neighbors > 0 and chance_for_rand_neighbor <= (
-                    1 - epsilon):  # Then we'll visit to a random neighbor
+            if is_visit_random_neighbor(v0, v0_adj_neighbors, v0_num_adj_neighbors, chance_for_rand_neighbor):
                 v0_rand_neighbor_indx = math.floor(rnd.uniform(0, v0_num_adj_neighbors))
                 next_vertex = v0_adj_neighbors[v0_rand_neighbor_indx]
             else:  # We'll visit a random vertex in G (by Uniform Distribution)
@@ -35,6 +33,20 @@ def page_rank(G, iterations=t):
         d[next_vertex] += 1
 
     return d / iterations
+
+
+def is_visit_random_neighbor(v0, v0_adj_neighbors, v0_num_adj_neighbors, chance_for_rand_neighbor):
+    result = False
+    # OPTION 1:
+    if v0_num_adj_neighbors > 0 and chance_for_rand_neighbor <= (1 - epsilon):  # Then we'll visit to a random neighbor
+        result = True
+    # TODO: QUESTION; What if v0 has only itself as a neighbor ??? Should we go to a random vertex instead?
+    # OPTION 2:
+    # if v0_num_adj_neighbors > 0:
+    #     if (v0_num_adj_neighbors > 1) or (v0 not in v0_adj_neighbors):
+    #         if chance_for_rand_neighbor <= (1 - epsilon):
+    #             result = True
+    return result
 
 
 def avg_node_degree(G):
@@ -69,9 +81,13 @@ def incremental_iterations_page_rank(G):
     print('Final iteration is {0}.\nresult: t = 2^{0} = {1}\n'.format(iteration, int(math.pow(2, iteration))))
     print('Final Vector = ', d_current)
     # TODO Write vector to external file
-    print('Max value in d=', d_current.max()[0][0])
+    # TODO: BUG!!! "IndexError: invalid index to scalar variable" - should be just 'd_current.max()'.
+    # print('Max value in d=', d_current.max()[0][0])
+    print('Max value in d=', d_current.max())
     print('Indices of max vale: ', np.where(d_current == d_current.max()))
-    print('Min value in d=', d_current.min()[0][0])
+    # TODO: BUG!!! "IndexError: invalid index to scalar variable" - should be just 'd_current.max()'.
+    # print('Min value in d=', d_current.min()[0][0])
+    print('Min value in d=', d_current.min())
     print('Indices of min vale: ', np.where(d_current == d_current.min()))
     print('Total Duration: {0} minutes'.format(total_diff_secs / 60))
 
