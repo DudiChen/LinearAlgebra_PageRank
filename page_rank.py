@@ -9,8 +9,8 @@ NUM_OF_VERTICES_G = int(math.pow(2, 10))
 NUM_OF_VERTICES_CYCLE = int(math.pow(2, 6))
 epsilon = 0.5
 file_index = 1
-N = 2 / epsilon  # int(math.pow(2, 7))  # int(2 / epsilon)  # Path length
-t = 2048  # default num of iterations
+N = int(2 / epsilon)  # int(math.pow(2, 10)) # Path length
+t = 2  # default num of iterations
 p = 1 / math.pow(2, 6)  # probability for edge creation
 
 
@@ -33,25 +33,29 @@ def page_rank(G, iterations=t, eps=epsilon):
         d[next_vertex] += 1
 
     normalized_d = d / iterations
-
+    write_vector_to_file(normalized_d, eps)
     print(normalized_d)
     return normalized_d
 
 
-def write_vector_to_file(vector):
+def write_vector_to_file(vector, eps):
     global file_index
-    f = open('Final_vector_d_{0}'.format(file_index), 'w')
+    f = open('Final_vector_d_{0}_eps_2_{1}'.format(file_index,-math.log(eps, 2)), 'w')
+    f.write('Epsilon=2^{0}\n\n'.format(-math.log(eps, 2)))
     for i in range(len(vector)):
         f.write('[{0}]={1} | '.format(i, vector[i]))
     f.write('\n\nAverage of normalized_d={0}\n'
             'Max value in d={1}\n'
             'Indices of max value: {2}\n'
             'Min value in d={3}\n'
-            'Indices of min value={4}'.format(np.average(vector),
+            'Indices of min value={4}\n'.format(np.average(vector),
                                               vector.max(),
                                               *np.where(vector == vector.max()),
                                               vector.min(),
                                               *np.where(vector == vector.min())))
+    if len(vector) > NUM_OF_VERTICES_G:
+        f.write('Average base graph distribution = {0}\n'.format(sum(vector[:NUM_OF_VERTICES_G]) / NUM_OF_VERTICES_G))
+        f.write('Average cycle graph distribution = {0}'.format(sum(vector[NUM_OF_VERTICES_G:]) / NUM_OF_VERTICES_CYCLE))
     f.close()
     file_index += 1
 
@@ -157,20 +161,15 @@ def incremental_epsilon_test(G):
 
 # TODO: Need to clear up garbage code from 'main'
 if __name__ == '__main__':
-    NUM_OF_VERTICES_G = int(math.pow(2, 10))
-    NUM_OF_VERTICES_CYCLE = int(math.pow(2, 6))
-    N = int(math.pow(2, 7))  # int(2 / epsilon)  # Path length
-    t = 2  # default num of iterations
-    p = 1 / math.pow(2, 6)  # probability for edge creation
     print('Parameters for current test:')
     print('p=1/2^{0}, epsilon={1}, N=2^{2}\n'.format(-math.log(p, 2), epsilon, (math.log(N, 2))))
     print('Parameters for Graph creation:')
     print('NUM_OF_VERTICES_G=2^{0}, NUM_OF_VERTICES_CYCLE=2^{1}\n'.format(math.log(NUM_OF_VERTICES_G, 2),
                                                                           math.log(NUM_OF_VERTICES_CYCLE, 2)))
     G = create_random_igraph_with_probability()
-    # G = create_cycle_graph_and_add_edge(G)
+    G = create_cycle_graph_and_add_edge(G)
     print('Average degree: ', avg_node_degree(G))
-    d = page_rank(G)
+    # d = page_rank(G)
     # incremental_iterations_page_rank(G)
-    # incremental_epsilon_test(G)
+    incremental_epsilon_test(G)
     print('------------------------------------')
