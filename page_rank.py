@@ -133,22 +133,23 @@ def incremental_epsilon_test(G):
         eps *= 0.5
         print('********************************************')
 
-    # TODO: Need to clear up garbage code from 'main'
+
+# TODO: Need to clear up garbage code from 'main'
 if __name__ == '__main__':
-        NUM_OF_VERTICES_G = int(math.pow(2, 10))
-        NUM_OF_VERTICES_CYCLE = int(math.pow(2, 6))
-        N = int(math.pow(2, 7))  # int(2 / epsilon)  # Path length
-        t = 2  # default num of iterations
-        p = 1 / math.pow(2, 6)  # probability for edge creation
-        print('Parameters for current test:')
-        print('p=1/2^{0}, epsilon={1}, N=2^{2}\n'.format(-math.log(p, 2), epsilon, (math.log(N, 2))))
-        print('Parameters for Graph creation:')
-        print('NUM_OF_VERTICES_G=2^{0}, NUM_OF_VERTICES_CYCLE=2^{1}\n'.format(math.log(NUM_OF_VERTICES_G, 2),
-                                                                              math.log(NUM_OF_VERTICES_CYCLE, 2)))
-        G = create_random_igraph_with_probability()
-        G = create_cycle_graph_and_add_edge(G)
-        print('Average degree: ', avg_node_degree(G))
-        # d = page_rank(G)
-        # incremental_iterations_page_rank(G)
-        incremental_epsilon_test(G)
-        print('------------------------------------')
+    NUM_OF_VERTICES_G = int(math.pow(2, 10))
+    NUM_OF_VERTICES_CYCLE = int(math.pow(2, 6))
+    N = int(math.pow(2, 7))  # int(2 / epsilon)  # Path length
+    t = 2  # default num of iterations
+    p = 1 / math.pow(2, 6)  # probability for edge creation
+    print('Parameters for current test:')
+    print('p=1/2^{0}, epsilon={1}, N=2^{2}\n'.format(-math.log(p, 2), epsilon, (math.log(N, 2))))
+    print('Parameters for Graph creation:')
+    print('NUM_OF_VERTICES_G=2^{0}, NUM_OF_VERTICES_CYCLE=2^{1}\n'.format(math.log(NUM_OF_VERTICES_G, 2),
+                                                                          math.log(NUM_OF_VERTICES_CYCLE, 2)))
+    G = create_random_igraph_with_probability()
+    G = create_cycle_graph_and_add_edge(G)
+    print('Average degree: ', avg_node_degree(G))
+    # d = page_rank(G)
+    # incremental_iterations_page_rank(G)
+    incremental_epsilon_test(G)
+    print('------------------------------------')
