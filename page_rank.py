@@ -39,7 +39,7 @@ def is_visit_random_neighbor(v0, v0_adj_neighbors, v0_num_adj_neighbors, chance_
     result = False
     if v0_num_adj_neighbors > 0:
         if (v0_num_adj_neighbors > 1) or (v0 not in v0_adj_neighbors):
-            if chance_for_rand_neighbor <= (1 - epsilon):
+            if chance_for_rand_neighbor <= (1 - eps):
                 result = True
     return result
 
