@@ -8,15 +8,15 @@ import igraph
 NUM_OF_VERTICES_G = int(math.pow(2, 10))
 NUM_OF_VERTICES_CYCLE = int(math.pow(2, 6))
 epsilon = 0.5
+file_index = 1
 N = 2 / epsilon  # int(math.pow(2, 7))  # int(2 / epsilon)  # Path length
-t = 2  # default num of iterations
+t = 2048  # default num of iterations
 p = 1 / math.pow(2, 6)  # probability for edge creation
 
 
 def page_rank(G, iterations=t, eps=epsilon):
     n = G.vcount()
     d = np.zeros(n)
-
     for _ in range(iterations):
         next_vertex = v0 = math.floor(rnd.uniform(0, n))
         for _ in range(N):
@@ -32,7 +32,28 @@ def page_rank(G, iterations=t, eps=epsilon):
             v0 = next_vertex
         d[next_vertex] += 1
 
-    return d / iterations
+    normalized_d = d / iterations
+
+    print(normalized_d)
+    return normalized_d
+
+
+def write_vector_to_file(vector):
+    global file_index
+    f = open('Final_vector_d_{0}'.format(file_index), 'w')
+    for i in range(len(vector)):
+        f.write('[{0}]={1} | '.format(i, vector[i]))
+    f.write('\n\nAverage of normalized_d={0}\n'
+            'Max value in d={1}\n'
+            'Indices of max value: {2}\n'
+            'Min value in d={3}\n'
+            'Indices of min value={4}'.format(np.average(vector),
+                                              vector.max(),
+                                              *np.where(vector == vector.max()),
+                                              vector.min(),
+                                              *np.where(vector == vector.min())))
+    f.close()
+    file_index += 1
 
 
 def is_visit_random_neighbor(v0, v0_adj_neighbors, v0_num_adj_neighbors, chance_for_rand_neighbor, eps):
@@ -147,9 +168,9 @@ if __name__ == '__main__':
     print('NUM_OF_VERTICES_G=2^{0}, NUM_OF_VERTICES_CYCLE=2^{1}\n'.format(math.log(NUM_OF_VERTICES_G, 2),
                                                                           math.log(NUM_OF_VERTICES_CYCLE, 2)))
     G = create_random_igraph_with_probability()
-    G = create_cycle_graph_and_add_edge(G)
+    # G = create_cycle_graph_and_add_edge(G)
     print('Average degree: ', avg_node_degree(G))
-    # d = page_rank(G)
+    d = page_rank(G)
     # incremental_iterations_page_rank(G)
-    incremental_epsilon_test(G)
+    # incremental_epsilon_test(G)
     print('------------------------------------')
