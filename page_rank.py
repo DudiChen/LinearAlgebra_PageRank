@@ -37,15 +37,10 @@ def page_rank(G, iterations=t, eps=epsilon):
 
 def is_visit_random_neighbor(v0, v0_adj_neighbors, v0_num_adj_neighbors, chance_for_rand_neighbor, eps):
     result = False
-    # OPTION 1:
-    if v0_num_adj_neighbors > 0 and chance_for_rand_neighbor <= (1 - eps):  # Then we'll visit to a random neighbor
-        result = True
-    # TODO: QUESTION; What if v0 has only itself as a neighbor ??? Should we go to a random vertex instead?
-    # OPTION 2:
-    # if v0_num_adj_neighbors > 0:
-    #     if (v0_num_adj_neighbors > 1) or (v0 not in v0_adj_neighbors):
-    #         if chance_for_rand_neighbor <= (1 - epsilon):
-    #             result = True
+    if v0_num_adj_neighbors > 0:
+        if (v0_num_adj_neighbors > 1) or (v0 not in v0_adj_neighbors):
+            if chance_for_rand_neighbor <= (1 - epsilon):
+                result = True
     return result
 
 
