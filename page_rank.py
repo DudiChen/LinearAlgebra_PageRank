@@ -7,9 +7,9 @@ import igraph
 
 NUM_OF_VERTICES_G = int(math.pow(2, 10))
 NUM_OF_VERTICES_CYCLE = int(math.pow(2, 6))
-epsilon = 0
+epsilon = 0.5
 file_index = 1
-N = int(math.pow(2, 6))  # int(2 / epsilon)  # int(math.pow(2, 6)) # Path length
+N = int(2 / epsilon)  # int(math.pow(2, 6))  # int(math.pow(2, 6)) # Path length
 t = 2  # default num of iterations
 p = 1 / math.pow(2, 6)  # probability for edge creation
 
@@ -142,7 +142,7 @@ def create_cycle_graph_and_add_edge(G):
     C = igraph.Graph.Ring(n_of_C, directed=True)
     G.add_vertices(n_of_C)
     G.add_edges([(k + n_of_G, l + n_of_G) for (k, l) in C.get_edgelist()])
-    u_of_edge = np.random.randint(low=0, high=n_of_G)  # let's give it 0 and len(G)
+    u_of_edge = n_of_G - 1  # np.random.randint(low=0, high=n_of_G)  # let's give it 0 and len(G)
     v_of_edge = np.random.randint(low=n_of_G, high=n_of_G + n_of_C)
     print('Edge that connects G to C is {{u,v}}={{{0}, {1}}}'.format(u_of_edge, v_of_edge))
     new_edges = [(u_of_edge, v_of_edge)]
@@ -174,6 +174,6 @@ if __name__ == '__main__':
     G = create_cycle_graph_and_add_edge(G)
     print('Average degree: ', avg_node_degree(G))
     # d = page_rank(G)
-    incremental_iterations_page_rank(G)
-    # incremental_epsilon_test(G)
+    # incremental_iterations_page_rank(G)
+    incremental_epsilon_test(G)
     print('------------------------------------')
